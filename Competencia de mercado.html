@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Estrategias Mixtas - Competencia de Mercado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .slider-track {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #cbd5e1;
+            outline: none;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4">
+
+    <!-- Encabezado -->
+    <header class="text-center mb-10 max-w-2xl flex flex-col items-center">
+        <div class="mb-4 text-7xl select-none">🏢</div>
+        <h1 class="text-4xl font-bold text-slate-800 mb-1 uppercase tracking-tight">Competencia de Mercado</h1>
+        <p class="text-lg font-semibold text-indigo-600 mb-3">
+            ✨ Simplifica 🚀 Impulsa 🔗 Conecta
+        </p>
+        <p class="text-slate-600 text-sm italic">Estrategias Mixtas: Distribución de presupuesto vs. Decisión de entrada</p>
+    </header>
+
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Panel del Monopolio (Jugador M) -->
+        <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1">
+            <h2 class="text-xl font-bold mb-6 text-slate-700 flex items-center gap-2">
+                👤 Jugador M (Monopolio)
+            </h2>
+            <p class="text-xs text-slate-500 mb-6 font-medium">Distribuye el 100% de tu presupuesto publicitario entre los tres medios:</p>
+            
+            <div class="space-y-8">
+                <!-- Regalar Muestras -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-bold text-slate-700">Regalar Muestras</label>
+                        <span id="label-m1" class="text-indigo-600 font-bold">34%</span>
+                    </div>
+                    <input type="range" id="m1" min="0" max="100" value="34" class="custom-slider" oninput="balanceSliders('m1')">
+                </div>
+
+                <!-- Prensa -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-bold text-slate-700">Prensa Escrita</label>
+                        <span id="label-m2" class="text-indigo-600 font-bold">33%</span>
+                    </div>
+                    <input type="range" id="m2" min="0" max="100" value="33" class="custom-slider" oninput="balanceSliders('m2')">
+                </div>
+
+                <!-- Medios Electrónicos -->
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <label class="text-sm font-bold text-slate-700">Medios Electrónicos</label>
+                        <span id="label-m3" class="text-indigo-600 font-bold">33%</span>
+                    </div>
+                    <input type="range" id="m3" min="0" max="100" value="33" class="custom-slider" oninput="balanceSliders('m3')">
+                </div>
+            </div>
+
+            <div class="mt-8 p-4 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1">Total Presupuesto</p>
+                <div class="flex items-center gap-2">
+                    <div class="h-4 flex-grow bg-slate-200 rounded-full overflow-hidden flex">
+                        <div id="bar-m1" class="bg-indigo-500 h-full" style="width: 34%;"></div>
+                        <div id="bar-m2" class="bg-indigo-400 h-full" style="width: 33%;"></div>
+                        <div id="bar-m3" class="bg-indigo-300 h-full" style="width: 33%;"></div>
+                    </div>
+                    <span id="total-pct" class="text-sm font-black text-slate-700">100%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Zona de Juego y Decisión del Competidor (Jugador N) -->
+        <section class="lg:col-span-2 space-y-6">
+            
+            <div class="bg-white p-8 rounded-2xl shadow-xl border border-indigo-100">
+                <h2 class="text-xl font-bold mb-6 text-slate-700 flex items-center gap-2">
+                    👥 Jugador N (Entrante)
+                </h2>
+                
+                <div class="text-center mb-8">
+                    <p class="text-slate-500 text-sm mb-4">Como empresa nueva, ¿qué decides hacer ante la campaña del Monopolio?</p>
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="calculateResults('entrar')" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition transform hover:-translate-y-1">
+                            Entrar al Mercado
+                        </button>
+                        <button onclick="calculateResults('no-entrar')" class="px-8 py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold shadow-lg transition transform hover:-translate-y-1">
+                            No Entrar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Resultados en tiempo real -->
+                <div id="result-area" class="hidden animate-fade-in">
+                    <hr class="mb-8 border-slate-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-indigo-50 rounded-2xl border border-indigo-100">
+                            <h4 class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-2">Utilidad Monopolio (M)</h4>
+                            <p id="util-m" class="text-5xl font-black text-indigo-700">0.0</p>
+                            <p class="text-xs text-indigo-500 mt-2">Ganancia esperada basada en la mezcla de inversión.</p>
+                        </div>
+                        <div class="p-6 bg-emerald-50 rounded-2xl border border-emerald-100">
+                            <h4 class="text-xs font-black text-emerald-400 uppercase tracking-widest mb-2">Utilidad Entrante (N)</h4>
+                            <p id="util-n" class="text-5xl font-black text-emerald-700">0.0</p>
+                            <p id="outcome-msg" class="text-xs text-emerald-500 mt-2">Impacto neto de la competencia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matriz de Pagos Estática para referencia -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <table class="w-full text-xs md:text-sm text-center">
+                    <thead>
+                        <tr class="text-slate-400 uppercase font-bold">
+                            <th class="p-2">Estrategia M</th>
+                            <th class="p-2 bg-blue-50 text-blue-600 rounded-t-lg">N: Entrar</th>
+                            <th class="p-2 bg-slate-50 text-slate-600 rounded-t-lg">N: No Entrar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                        <tr class="border-b border-slate-100">
+                            <td class="p-3 font-bold text-left">Regalar Muestras</td>
+                            <td class="p-3 bg-blue-50/30">(40, 20)</td>
+                            <td class="p-3 bg-slate-50/30">(90, 0)</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="p-3 font-bold text-left">Prensa</td>
+                            <td class="p-3 bg-blue-50/30">(30, 10)</td>
+                            <td class="p-3 bg-slate-50/30">(60, 0)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3 font-bold text-left">Medios Electr.</td>
+                            <td class="p-3 bg-blue-50/30">(50, -15)</td>
+                            <td class="p-3 bg-slate-50/30">(60, 0)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const sliders = {
+            m1: document.getElementById('m1'),
+            m2: document.getElementById('m2'),
+            m3: document.getElementById('m3')
+        };
+
+        const labels = {
+            m1: document.getElementById('label-m1'),
+            m2: document.getElementById('label-m2'),
+            m3: document.getElementById('label-m3')
+        };
+
+        const bars = {
+            m1: document.getElementById('bar-m1'),
+            m2: document.getElementById('bar-m2'),
+            m3: document.getElementById('bar-m3')
+        };
+
+        // Matriz de pagos: [Ganancia M, Ganancia N]
+        const matrix = {
+            m1: { entrar: [40, 20], noEntrar: [90, 0] },
+            m2: { entrar: [30, 10], noEntrar: [60, 0] },
+            m3: { entrar: [50, -15], noEntrar: [60, 0] }
+        };
+
+        function balanceSliders(changedId) {
+            let v1 = parseInt(sliders.m1.value);
+            let v2 = parseInt(sliders.m2.value);
+            let v3 = parseInt(sliders.m3.value);
+            
+            let total = v1 + v2 + v3;
+            
+            if (total !== 100) {
+                const diff = 100 - total;
+                const others = Object.keys(sliders).filter(id => id !== changedId);
+                
+                // Intentamos repartir la diferencia en los otros dos
+                let share = diff / 2;
+                
+                let o1 = parseInt(sliders[others[0]].value) + share;
+                let o2 = parseInt(sliders[others[1]].value) + share;
+
+                // Corregir fuera de límites
+                if (o1 < 0) { o2 += o1; o1 = 0; }
+                if (o2 < 0) { o1 += o2; o2 = 0; }
+                if (o1 > 100) { o2 -= (o1 - 100); o1 = 100; }
+                if (o2 > 100) { o1 -= (o2 - 100); o2 = 100; }
+
+                sliders[others[0]].value = Math.round(o1);
+                sliders[others[1]].value = 100 - Math.round(o1) - parseInt(sliders[changedId].value);
+            }
+
+            updateUI();
+        }
+
+        function updateUI() {
+            Object.keys(sliders).forEach(id => {
+                const val = sliders[id].value;
+                labels[id].innerText = val + "%";
+                bars[id].style.width = val + "%";
+            });
+            // Si ya hay resultados visibles, recalculamos dinámicamente
+            if (!document.getElementById('result-area').classList.contains('hidden')) {
+                const lastAction = window.lastAction || 'entrar';
+                calculateResults(lastAction);
+            }
+        }
+
+        function calculateResults(action) {
+            window.lastAction = action;
+            const p1 = parseInt(sliders.m1.value) / 100;
+            const p2 = parseInt(sliders.m2.value) / 100;
+            const p3 = parseInt(sliders.m3.value) / 100;
+
+            let finalM, finalN;
+
+            if (action === 'entrar') {
+                finalM = (p1 * matrix.m1.entrar[0]) + (p2 * matrix.m2.entrar[0]) + (p3 * matrix.m3.entrar[0]);
+                finalN = (p1 * matrix.m1.entrar[1]) + (p2 * matrix.m2.entrar[1]) + (p3 * matrix.m3.entrar[1]);
+                document.getElementById('outcome-msg').innerText = "Competencia activa en el mercado.";
+            } else {
+                finalM = (p1 * matrix.m1.noEntrar[0]) + (p2 * matrix.m2.noEntrar[0]) + (p3 * matrix.m3.noEntrar[0]);
+                finalN = 0;
+                document.getElementById('outcome-msg').innerText = "El Monopolio mantiene su dominio sin competencia.";
+            }
+
+            document.getElementById('util-m').innerText = finalM.toFixed(1);
+            document.getElementById('util-n').innerText = finalN.toFixed(1);
+            document.getElementById('result-area').classList.remove('hidden');
+            
+            // Efecto visual en la utilidad de N
+            const utilNElement = document.getElementById('util-n');
+            if (finalN < 0) {
+                utilNElement.className = "text-5xl font-black text-red-600";
+            } else if (finalN > 0) {
+                utilNElement.className = "text-5xl font-black text-emerald-600";
+            } else {
+                utilNElement.className = "text-5xl font-black text-slate-400";
+            }
+        }
+
+        // Inicialización
+        updateUI();
+    </script>
+</body>
+</html>
